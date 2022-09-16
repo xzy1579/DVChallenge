@@ -1,0 +1,229 @@
+using DV.Logic.Job;
+using HarmonyLib;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+namespace DvMod.Challenges
+{
+    public static class AllJobs
+    {
+        public static string curStation = "";
+        public static string leftStation = "";
+        public static string challengeStation = "";
+        public static int numJobs = 0;
+        public static int abandonJobs = 0;
+        public static int takenJobs = 0;
+        public static int completedJobs = 0;
+
+        public static int counter = 0;
+
+
+        [HarmonyPatch(typeof(StationController), nameof(StationController.Update))]
+        public static class UpdatePatch
+        {
+            public static bool Prefix(StationController __instance)
+            {
+
+                try
+                {
+
+                    if (__instance.logicStation == null || !SaveLoadController.carsAndJobsLoadingFinished)
+                    {
+                        if (Main.mod != null)
+                        {
+                            //                            Main.mod.Logger.Log("in the patch1a");
+                        }
+                        return false;
+                    }
+                    else
+                    {
+                        if (Main.mod != null)
+                        {
+                            //                            Main.mod.Logger.Log("in the patch1b");
+                        }
+                    }
+
+                    if (Main.mod != null && __instance.stationRange != null && !__instance.logicStation.ID.Equals("MFMB") && !__instance.logicStation.ID.Equals("HMB"))
+                    {
+                        bool atStation = false;
+                        // are we at a station?
+                        if (__instance.stationRange.IsPlayerInRangeForBookletGeneration(__instance.stationRange.PlayerSqrDistanceFromStationOffice))
+                        {
+                            atStation = true;
+                        }
+
+                        // did we leave a station
+                        if (curStation.Equals(__instance.logicStation.ID) && atStation == false && !curStation.Equals(""))
+                        {
+                            Main.mod.Logger.Log("left station " + __instance.logicStation.ID + ": " + __instance.logicStation.name + "t=" + __instance.logicStation.takenJobs.Count + " c="+ __instance.logicStation.completedJobs.Count);
+                            leftStation = curStation;
+                            curStation = "";
+                        }
+
+                        // this gets hit next time around
+                        if (leftStation.Equals(__instance.logicStation.ID))
+                        {
+                            // did we leave our challenge station?
+                            if (leftStation.Equals(challengeStation))
+                            {
+                                if (__instance.logicStation.availableJobs.Count > 0)
+                                {
+                                    Main.mod.Logger.Log("Abandon Challenge; Left " + __instance.logicStation.availableJobs.Count + " jobs at " + leftStation);
+                                    challengeStation = "";
+                                    numJobs = 0;
+                                    abandonJobs = 0;
+                                    takenJobs = 0;
+                                    completedJobs = 0;
+                                }
+                            }
+                            if(challengeStation.Equals("") && __instance.logicStation.availableJobs.Count==0)
+                            {
+                                Main.mod.Logger.Log("Starting Challenge, Took all jobs at " + leftStation);
+                                challengeStation = leftStation;
+                                takenJobs = __instance.logicStation.takenJobs.Count;
+                            }
+                            leftStation = "";
+                        }
+
+                        // see if we have completed all jobs in the challengestation
+                        if (challengeStation.Equals(__instance.logicStation.ID))
+                        {
+                            if(__instance.logicStation.takenJobs.Count == 0 && takenJobs!=0 && __instance.logicStation.completedJobs.Count != 0 && __instance.logicStation.abandonedJobs.Count == 0)
+                            {
+                                Main.mod.Logger.Log("Completed challenge for " + challengeStation + "t=" + takenJobs + " c=" + __instance.logicStation.completedJobs.Count + " a=" + __instance.logicStation.abandonedJobs.Count);
+                                challengeStation = "";
+                                numJobs = 0;
+                                abandonJobs = 0;
+                                takenJobs = 0;
+                                completedJobs = 0;
+                            }
+                            else
+                            {
+                                counter++;
+                                if(counter>1000)
+                                {
+                                    Main.mod.Logger.Log("Active challenge for " + challengeStation + " t=" + __instance.logicStation.takenJobs.Count + " c=" + __instance.logicStation.completedJobs.Count);
+                                    counter = 0;
+                                }
+                            }
+                        }
+
+
+                        // are we at a new station?
+                        if (atStation && !curStation.Equals(__instance.logicStation.ID))
+                        {
+                            Main.mod.Logger.Log("arrive station " + __instance.logicStation.ID + ": " + __instance.logicStation.name + " from " + curStation);
+                            curStation = __instance.logicStation.ID;
+                        }
+
+                        if (atStation && challengeStation.Equals(__instance.logicStation.ID))
+                        {
+                        }
+                        if (atStation && !challengeStation.Equals("") && !challengeStation.Equals(__instance.logicStation.ID) && __instance.logicStation.takenJobs.Count > 0)
+                        {
+                            Main.mod.Logger.Log("Abandon Challenge at " + challengeStation + " Took jobs at " + __instance.logicStation.ID);
+                            challengeStation = "";
+                            numJobs = 0;
+                            abandonJobs = 0;
+                            takenJobs = 0;
+                            completedJobs = 0;
+                        }
+                        return true;
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    if (Main.mod != null)
+                    {
+                        Main.mod.Logger.Log("in the patchE " + ex.Message);
+                    }
+                }
+                return true;
+            }
+        }
+        /*
+                [HarmonyPatch(typeof(StationController), nameof(StationController.Update))]
+                public static class UpdatePatch
+                {
+                    public static bool Prefix(StationController __instance)
+                    {
+
+                        try
+                        {
+
+                            if (__instance.logicStation == null || !SaveLoadController.carsAndJobsLoadingFinished)
+                            {
+                                if (Main.mod != null)
+                                {
+        //                            Main.mod.Logger.Log("in the patch1a");
+                                }
+                                return false;
+                            }
+                            else
+                            {
+                                if (Main.mod != null)
+                                {
+                                    //                            Main.mod.Logger.Log("in the patch1b");
+                                }
+                            }
+
+                            if (Main.mod != null && __instance.stationRange != null)
+                            {
+                                bool atStation = false;
+                                try
+                                {
+                                    if (__instance.stationRange.IsPlayerInRangeForBookletGeneration(__instance.stationRange.PlayerSqrDistanceFromStationOffice)) 
+                                    { 
+                                        atStation = true; 
+                                    }
+                                }
+                                catch { }
+
+                                if (curStation.Equals(__instance.logicStation.ID) && atStation == false)
+                                {
+                                    Main.mod.Logger.Log("in the patch2a, left station " + __instance.logicStation.ID + ": " + __instance.logicStation.name + " : jobs=" + numJobs);
+                                    leftStation = curStation;
+                                    curStation = "";
+                                }
+
+                                if(leftStation.Equals(__instance.logicStation.ID))
+                                {
+                                    if(__instance.logicStation.availableJobs.Count > 0)
+                                    {
+                                        Main.mod.Logger.Log("Left " + __instance.logicStation.availableJobs.Count + " jobs at " + leftStation);
+                                    }
+                                    else
+                                    {
+                                        Main.mod.Logger.Log("Took all jobs at " + leftStation);
+                                    }
+                                    leftStation = "";
+                                }
+
+                                if (atStation && !curStation.Equals(__instance.logicStation.ID))
+                                {
+
+                                    numJobs = __instance.logicStation.availableJobs.Count;
+                                    abandonJobs = __instance.logicStation.abandonedJobs.Count;
+                                    takenJobs = __instance.logicStation.takenJobs.Count;
+                                    completedJobs = __instance.logicStation.completedJobs.Count;
+                                    Main.mod.Logger.Log("in the patch2b, arrive station" + __instance.logicStation.ID + ": " + __instance.logicStation.name);
+                                    Main.mod.Logger.Log("jobs=" + numJobs + " : takenJobs=" + takenJobs + " : completedJobs=" + completedJobs + " : abandonJobs=" + abandonJobs);
+                                    curStation = __instance.logicStation.ID;
+                                }
+                                return true;
+                            }
+                        }
+                        catch (System.Exception ex)
+                        {
+                            if (Main.mod != null)
+                            {
+                                Main.mod.Logger.Log("in the patchE " + ex.Message);
+                            }
+                        }
+                        return true;
+                    }
+                }
+        */
+    }
+}
