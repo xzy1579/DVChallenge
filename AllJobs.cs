@@ -31,7 +31,7 @@ namespace DvMod.Challenges
                     {
                         if (Main.mod != null)
                         {
-                            //                            Main.mod.Logger.Log("in the patch1a");
+                            //                            Main.DebugLog("in the patch1a");
                         }
                         return false;
                     }
@@ -39,7 +39,7 @@ namespace DvMod.Challenges
                     {
                         if (Main.mod != null)
                         {
-                            //                            Main.mod.Logger.Log("in the patch1b");
+                            //                            Main.DebugLog("in the patch1b");
                         }
                     }
 
@@ -55,7 +55,7 @@ namespace DvMod.Challenges
                         // did we leave a station
                         if (curStation.Equals(__instance.logicStation.ID) && atStation == false && !curStation.Equals(""))
                         {
-                            Main.mod.Logger.Log("left station " + __instance.logicStation.ID + ": " + __instance.logicStation.name + "t=" + __instance.logicStation.takenJobs.Count + " c="+ __instance.logicStation.completedJobs.Count);
+//                            Main.DebugLog("AJ left station " + __instance.logicStation.ID + ": " + __instance.logicStation.name + "t=" + __instance.logicStation.takenJobs.Count + " c="+ __instance.logicStation.completedJobs.Count);
                             leftStation = curStation;
                             curStation = "";
                         }
@@ -69,7 +69,7 @@ namespace DvMod.Challenges
                                 if (__instance.logicStation.availableJobs.Count > 0)
                                 {
                                     string message = "Left " + __instance.logicStation.availableJobs.Count + " jobs";
-                                    Main.mod.Logger.Log(message);
+                                    Main.DebugLog("AJ "+message);
 
                                     AllJob newJob = new AllJob();
                                     newJob.stationId = leftStation;
@@ -91,7 +91,7 @@ namespace DvMod.Challenges
                                 if(!prevJob.status.Equals("Completed"))
                                 {
                                     string message = "Took all";
-                                    Main.mod.Logger.Log(message);
+                                    Main.DebugLog("AJ " +message);
                                     challengeStation = leftStation;
                                     takenJobs = __instance.logicStation.takenJobs.Count;
 
@@ -108,12 +108,12 @@ namespace DvMod.Challenges
                         }
 
                         // see if we have completed all jobs in the challengestation
-                        if (challengeStation.Equals(__instance.logicStation.ID))
+                        if (!challengeStation.Equals("") && challengeStation.Equals(__instance.logicStation.ID))
                         {
                             if(__instance.logicStation.takenJobs.Count == 0 && takenJobs!=0 && __instance.logicStation.completedJobs.Count != 0 && __instance.logicStation.abandonedJobs.Count == 0)
                             {
                                 string message =  __instance.logicStation.completedJobs.Count + " jobs";
-                                Main.mod.Logger.Log(message);
+                                Main.DebugLog("AJ " + message);
 
                                 AllJob newJob = new AllJob();
                                 newJob.stationId = challengeStation;
@@ -136,7 +136,7 @@ namespace DvMod.Challenges
                                     if (__instance.logicStation.abandonedJobs.Count > 0)
                                     {
                                         string message = "Abandoned a job";
-                                        Main.mod.Logger.Log(message);
+                                        Main.DebugLog("AJ " + message);
 
                                         AllJob newJob = new AllJob();
                                         newJob.stationId = challengeStation;
@@ -144,6 +144,7 @@ namespace DvMod.Challenges
                                         newJob.message = message;
                                         string retVal = Status.save(newJob);
                                         Main.DebugLog(() => "Saving retVal = " + retVal);
+                                        Main.DebugLog("AJ Abaondon challenge for " + challengeStation+"-" + __instance.logicStation.ID + " t1=" + __instance.logicStation.takenJobs.Count + "t2=" + takenJobs + " c=" + __instance.logicStation.completedJobs.Count + " a=" + __instance.logicStation.abandonedJobs.Count);
 
                                         challengeStation = "";
                                         numJobs = 0;
@@ -151,7 +152,7 @@ namespace DvMod.Challenges
                                         takenJobs = 0;
                                         completedJobs = 0;
                                     }
-                                    Main.mod.Logger.Log("Active challenge for " + challengeStation + " t1=" + __instance.logicStation.takenJobs.Count + "t2=" + takenJobs + " c=" + __instance.logicStation.completedJobs.Count + " a=" + __instance.logicStation.abandonedJobs.Count);
+                                    Main.DebugLog("AJ Active challenge for " + challengeStation + " t1=" + __instance.logicStation.takenJobs.Count + "t2=" + takenJobs + " c=" + __instance.logicStation.completedJobs.Count + " a=" + __instance.logicStation.abandonedJobs.Count);
                                     counter = 0;
                                 }
                             }
@@ -161,7 +162,7 @@ namespace DvMod.Challenges
                         // are we at a new station?
                         if (atStation && !curStation.Equals(__instance.logicStation.ID))
                         {
-                            Main.mod.Logger.Log("arrive station " + __instance.logicStation.ID + ": " + __instance.logicStation.name + " from " + curStation);
+//                            Main.DebugLog("AJ arrive station " + __instance.logicStation.ID + ": " + __instance.logicStation.name + " from " + curStation);
                             curStation = __instance.logicStation.ID;
                         }
 
@@ -171,7 +172,7 @@ namespace DvMod.Challenges
                         if (atStation && !challengeStation.Equals("") && !challengeStation.Equals(__instance.logicStation.ID) && __instance.logicStation.takenJobs.Count > 0)
                         {
                             string message = "Took " + __instance.logicStation.takenJobs.Count + " " +__instance.logicStation.ID + "jobs";
-                            Main.mod.Logger.Log(message);
+                            Main.DebugLog("AJ " + message);
 
                             AllJob newJob = new AllJob();
                             newJob.stationId = challengeStation;
@@ -194,7 +195,7 @@ namespace DvMod.Challenges
                 {
                     if (Main.mod != null)
                     {
-                        Main.mod.Logger.Log("in the patchE " + ex.Message);
+                        Main.DebugLog("AJ in the patchE " + ex.Message);
                     }
                 }
                 return true;

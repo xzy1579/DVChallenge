@@ -32,7 +32,7 @@ namespace DvMod.Challenges
                     {
                         if (Main.mod != null)
                         {
-                            //                            Main.mod.Logger.Log("in the patch1a");
+                            //                            Main.DebugLog("in the patch1a");
                         }
                         return false;
                     }
@@ -40,7 +40,7 @@ namespace DvMod.Challenges
                     {
                         if (Main.mod != null)
                         {
-                            //                            Main.mod.Logger.Log("in the patch1b");
+                            //                            Main.DebugLog("in the patch1b");
                         }
                     }
 
@@ -56,7 +56,7 @@ namespace DvMod.Challenges
                         // did we leave a station
                         if (curStation.Equals(__instance.logicStation.ID) && atStation == false && !curStation.Equals(""))
                         {
-                            Main.mod.Logger.Log("left station " + __instance.logicStation.ID + ": " + __instance.logicStation.name + "t=" + __instance.logicStation.takenJobs.Count + " c="+ __instance.logicStation.completedJobs.Count);
+                            Main.DebugLog("left station " + __instance.logicStation.ID + ": " + __instance.logicStation.name + "t=" + __instance.logicStation.takenJobs.Count + " c="+ __instance.logicStation.completedJobs.Count);
                             leftStation = curStation;
                             curStation = "";
                         }
@@ -69,7 +69,7 @@ namespace DvMod.Challenges
                             {
                                 if (__instance.logicStation.availableJobs.Count > 0)
                                 {
-                                    Main.mod.Logger.Log("Abandon Challenge; Left " + __instance.logicStation.availableJobs.Count + " jobs at " + leftStation);
+                                    Main.DebugLog("Abandon Challenge; Left " + __instance.logicStation.availableJobs.Count + " jobs at " + leftStation);
                                     challengeStation = "";
                                     numJobs = 0;
                                     abandonJobs = 0;
@@ -79,7 +79,7 @@ namespace DvMod.Challenges
                             }
                             if(challengeStation.Equals("") && __instance.logicStation.availableJobs.Count==0)
                             {
-                                Main.mod.Logger.Log("Starting Challenge, Took all jobs at " + leftStation);
+                                Main.DebugLog("Starting Challenge, Took all jobs at " + leftStation);
                                 challengeStation = leftStation;
                                 takenJobs = __instance.logicStation.takenJobs.Count;
                             }
@@ -91,7 +91,7 @@ namespace DvMod.Challenges
                         {
                             if(__instance.logicStation.takenJobs.Count == 0 && takenJobs!=0 && __instance.logicStation.completedJobs.Count != 0 && __instance.logicStation.abandonedJobs.Count == 0)
                             {
-                                Main.mod.Logger.Log("Completed challenge for " + challengeStation + "t=" + takenJobs + " c=" + __instance.logicStation.completedJobs.Count + " a=" + __instance.logicStation.abandonedJobs.Count);
+                                Main.DebugLog("Completed challenge for " + challengeStation + "t=" + takenJobs + " c=" + __instance.logicStation.completedJobs.Count + " a=" + __instance.logicStation.abandonedJobs.Count);
                                 challengeStation = "";
                                 numJobs = 0;
                                 abandonJobs = 0;
@@ -103,7 +103,7 @@ namespace DvMod.Challenges
                                 counter++;
                                 if(counter>1000)
                                 {
-                                    Main.mod.Logger.Log("Active challenge for " + challengeStation + " t=" + __instance.logicStation.takenJobs.Count + " c=" + __instance.logicStation.completedJobs.Count);
+                                    Main.DebugLog("Active challenge for " + challengeStation + " t=" + __instance.logicStation.takenJobs.Count + " c=" + __instance.logicStation.completedJobs.Count);
                                     counter = 0;
                                 }
                             }
@@ -113,7 +113,7 @@ namespace DvMod.Challenges
                         // are we at a new station?
                         if (atStation && !curStation.Equals(__instance.logicStation.ID))
                         {
-                            Main.mod.Logger.Log("arrive station " + __instance.logicStation.ID + ": " + __instance.logicStation.name + " from " + curStation);
+                            Main.DebugLog("arrive station " + __instance.logicStation.ID + ": " + __instance.logicStation.name + " from " + curStation);
                             curStation = __instance.logicStation.ID;
                         }
 
@@ -122,7 +122,7 @@ namespace DvMod.Challenges
                         }
                         if (atStation && !challengeStation.Equals("") && !challengeStation.Equals(__instance.logicStation.ID) && __instance.logicStation.takenJobs.Count > 0)
                         {
-                            Main.mod.Logger.Log("Abandon Challenge at " + challengeStation + " Took jobs at " + __instance.logicStation.ID);
+                            Main.DebugLog("Abandon Challenge at " + challengeStation + " Took jobs at " + __instance.logicStation.ID);
                             challengeStation = "";
                             numJobs = 0;
                             abandonJobs = 0;
@@ -136,7 +136,7 @@ namespace DvMod.Challenges
                 {
                     if (Main.mod != null)
                     {
-                        Main.mod.Logger.Log("in the patchE " + ex.Message);
+                        Main.DebugLog("in the patchE " + ex.Message);
                     }
                 }
                 return true;
@@ -156,7 +156,7 @@ namespace DvMod.Challenges
                             {
                                 if (Main.mod != null)
                                 {
-        //                            Main.mod.Logger.Log("in the patch1a");
+        //                            Main.DebugLog("in the patch1a");
                                 }
                                 return false;
                             }
@@ -164,7 +164,7 @@ namespace DvMod.Challenges
                             {
                                 if (Main.mod != null)
                                 {
-                                    //                            Main.mod.Logger.Log("in the patch1b");
+                                    //                            Main.DebugLog("in the patch1b");
                                 }
                             }
 
@@ -182,7 +182,7 @@ namespace DvMod.Challenges
 
                                 if (curStation.Equals(__instance.logicStation.ID) && atStation == false)
                                 {
-                                    Main.mod.Logger.Log("in the patch2a, left station " + __instance.logicStation.ID + ": " + __instance.logicStation.name + " : jobs=" + numJobs);
+                                    Main.DebugLog("in the patch2a, left station " + __instance.logicStation.ID + ": " + __instance.logicStation.name + " : jobs=" + numJobs);
                                     leftStation = curStation;
                                     curStation = "";
                                 }
@@ -191,11 +191,11 @@ namespace DvMod.Challenges
                                 {
                                     if(__instance.logicStation.availableJobs.Count > 0)
                                     {
-                                        Main.mod.Logger.Log("Left " + __instance.logicStation.availableJobs.Count + " jobs at " + leftStation);
+                                        Main.DebugLog("Left " + __instance.logicStation.availableJobs.Count + " jobs at " + leftStation);
                                     }
                                     else
                                     {
-                                        Main.mod.Logger.Log("Took all jobs at " + leftStation);
+                                        Main.DebugLog("Took all jobs at " + leftStation);
                                     }
                                     leftStation = "";
                                 }
@@ -207,8 +207,8 @@ namespace DvMod.Challenges
                                     abandonJobs = __instance.logicStation.abandonedJobs.Count;
                                     takenJobs = __instance.logicStation.takenJobs.Count;
                                     completedJobs = __instance.logicStation.completedJobs.Count;
-                                    Main.mod.Logger.Log("in the patch2b, arrive station" + __instance.logicStation.ID + ": " + __instance.logicStation.name);
-                                    Main.mod.Logger.Log("jobs=" + numJobs + " : takenJobs=" + takenJobs + " : completedJobs=" + completedJobs + " : abandonJobs=" + abandonJobs);
+                                    Main.DebugLog("in the patch2b, arrive station" + __instance.logicStation.ID + ": " + __instance.logicStation.name);
+                                    Main.DebugLog("jobs=" + numJobs + " : takenJobs=" + takenJobs + " : completedJobs=" + completedJobs + " : abandonJobs=" + abandonJobs);
                                     curStation = __instance.logicStation.ID;
                                 }
                                 return true;
@@ -218,7 +218,7 @@ namespace DvMod.Challenges
                         {
                             if (Main.mod != null)
                             {
-                                Main.mod.Logger.Log("in the patchE " + ex.Message);
+                                Main.DebugLog("in the patchE " + ex.Message);
                             }
                         }
                         return true;

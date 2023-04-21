@@ -21,8 +21,24 @@ namespace DvMod.Challenges
             try
             {
                 var loaded = Settings.Load<Settings>(modEntry);
+                settings = loaded;
+
                 if (loaded.version == modEntry.Info.Version)
+                {
+//                    settings = loaded;
+                }
+
+                if(settings.resetAllJobs == true)
+                {
+                    Status.createNewFile();
+                    settings.resetAllJobs = false;
+                    settings.Save(modEntry);
+                    loaded = Settings.Load<Settings>(modEntry);
                     settings = loaded;
+                }
+                Status.loadChallengeStatus(true);
+                Signals.processSettings(settings);
+                SignalPattern.processSettings(settings);
             }
             catch
             {
@@ -51,8 +67,6 @@ namespace DvMod.Challenges
                 }
             }
 
-            Main.DebugLog(()=>"Rods load done 2");
-
 
             return true;
         }
@@ -65,6 +79,17 @@ namespace DvMod.Challenges
         private static void OnSaveGUI(UnityModManager.ModEntry modEntry)
         {
             settings.Save(modEntry);
+            settings = Settings.Load<Settings>(modEntry);
+
+            if (settings.resetAllJobs == true)
+            {
+                Status.createNewFile();
+                settings.resetAllJobs = false;
+                settings.Save(modEntry);
+                settings = Settings.Load<Settings>(modEntry);
+            }
+            Signals.processSettings(settings);
+            SignalPattern.processSettings(settings);
         }
 
         private static bool OnToggle(UnityModManager.ModEntry modEntry, bool value)
@@ -78,15 +103,14 @@ namespace DvMod.Challenges
             return true;
         }
 
-        public static void DebugLog(TrainCar car, Func<string> message)
+        public static void DebugLog(string message)
         {
-            if (car == PlayerManager.Car)
-                DebugLog(message);
+            DebugLog(()=>message);
         }
 
         public static void DebugLog(Func<string> message)
         {
-            if (settings.enableLogging || true)
+            if (settings.enableLogging)
                 mod?.Logger.Log(message());
         }
     }
